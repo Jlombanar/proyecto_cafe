@@ -77,8 +77,9 @@ class AuthService {
     }
   }
 
-  // Registra un usuario nuevo
-  static Future<Usuario> registrar({
+  // Registra un usuario nuevo; el backend envía un código al correo
+  // y devuelve el mensaje a mostrar. La cuenta queda sin verificar.
+  static Future<String> registrar({
     required String nombre,
     required String apellido,
     required String telefono,
@@ -100,17 +101,46 @@ class AuthService {
     final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      final Map<String, dynamic> usuarioMap = 
-          (data['usuario'] as Map<String, dynamic>?) ?? data;
-
-      final usuario = Usuario.fromJson(usuarioMap);
-
-      if (data['token'] != null) {
-        await SessionService.guardarSesion(data['token'], usuario);
-      }
-      return usuario;
+      return data['message'] ?? 'Te enviamos un código a tu correo';
     } else {
       throw Exception(data['message'] ?? data['msg'] ?? 'Error al registrarse');
+    }
+  }
+
+  // Verifica el código de 6 dígitos enviado al correo
+  static Future<String> verificarCodigo({
+    required String correo,
+    required String codigo,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/usuarios/verificar-codigo'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'Correo_Electronico': correo, 'codigo': codigo}),
+    );
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    if (response.statusCode == 200) {
+      return data['message'] ?? 'Cuenta verificada';
+    } else {
+      throw Exception(data['message'] ?? 'Error al verificar el código');
+    }
+  }
+
+  // Solicita un nuevo código de verificación
+  static Future<String> reenviarCodigo({required String correo}) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/usuarios/reenviar-codigo'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'Correo_Electronico': correo}),
+    );
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    if (response.statusCode == 200) {
+      return data['message'] ?? 'Código reenviado';
+    } else {
+      throw Exception(data['message'] ?? 'Error al reenviar el código');
     }
   }
 

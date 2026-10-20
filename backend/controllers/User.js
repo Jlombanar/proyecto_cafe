@@ -11,9 +11,10 @@ export const registrarUsers = async (req, res) => {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Verificar si el correo ya existe
-    const existeUser = await User.findOne({ Correo_Electronico });
-    if (existeUser) {
+    // Verificar si el correo ya existe (el esquema lo guarda en minúsculas)
+    const correo = Correo_Electronico.toLowerCase().trim();
+    const existeUser = await User.findOne({ Correo_Electronico: correo });
+    if (existeUser && existeUser.isVerified) {
       return res.status(400).json({ message: "El correo electrónico ya está registrado" });
     }
 
@@ -21,12 +22,12 @@ export const registrarUsers = async (req, res) => {
     const codigo = Math.floor(100000 + Math.random() * 900000).toString();
     const expiracion = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Guardar usuario inactivo
-    const nuevoUser = new User({
+    // Si existe pero no se verificó, se actualizan sus datos; si no, se crea
+    const nuevoUser = existeUser || new User({ Correo_Electronico: correo });
+    nuevoUser.set({
       Nombre,
       Apellido,
       telefono,
-      Correo_Electronico,
       passwords,
       codigoVerificacion: codigo,
       codigoVerificacionExpiracion: expiracion,
@@ -35,8 +36,14 @@ export const registrarUsers = async (req, res) => {
 
     await nuevoUser.save();
 
-    // Enviar el correo
-    await enviarCodigoVerificacion(Correo_Electronico, Nombre, codigo);
+    // Enviar el correo; si falla, no dejar un usuario nuevo a medias
+    try {
+      await enviarCodigoVerificacion(correo, Nombre, codigo);
+    } catch (errorCorreo) {
+      console.error("Error enviando correo de verificación:", errorCorreo?.body || errorCorreo?.message || errorCorreo);
+      if (!existeUser) await User.deleteOne({ _id: nuevoUser._id });
+      return res.status(502).json({ message: "No se pudo enviar el correo de verificación. Intente de nuevo más tarde." });
+    }
 
     res.status(200).json({
       message: "Hemos enviado un código de 6 dígitos a su correo para completar el registro.",

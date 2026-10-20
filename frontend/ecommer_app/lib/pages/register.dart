@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ecommer_app/services/auth_service.dart';
-import 'package:ecommer_app/pages/menu.dart';
+import 'package:ecommer_app/pages/verify_code.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -61,19 +61,23 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _cargando = true);
 
     try {
-      await AuthService.registrar(
+      final correo = _correoController.text.trim().toLowerCase();
+      final mensaje = await AuthService.registrar(
         nombre: _nombreController.text.trim(),
         apellido: _apellidoController.text.trim(),
         telefono: _telefonoController.text.trim(),
-        correo: _correoController.text.trim(),
+        correo: correo,
         password: _passwordController.text,
       );
 
       if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(mensaje), backgroundColor: Colors.green),
+      );
+      // La cuenta queda pendiente hasta ingresar el código del correo
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const Menu()),
-        (route) => false,
+        MaterialPageRoute(builder: (_) => VerifyCodePage(correo: correo)),
       );
     } catch (error) {
       if (!mounted) return;
