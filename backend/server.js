@@ -39,6 +39,11 @@ app.get("/saludo", (req, res) => {
   });
 });
 
+// Montando las rutas de la API
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // rutas de usuarios
 app.use("/api/usuarios", userRoutes);
 // rutas de login
