@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:desktop_drop/desktop_drop.dart';
@@ -105,6 +105,39 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     );
   }
 
+  bool get _tieneCamara =>
+      !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
+
+  Future<void> _seleccionarImagen() async {
+    ImageSource? origen = ImageSource.gallery;
+    if (_tieneCamara) {
+      origen = await showModalBottomSheet<ImageSource>(
+        context: context,
+        backgroundColor: const Color(0xFF26221F),
+        builder: (ctx) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera_rounded, color: Color(0xFFC88D51)),
+                title: const Text('Tomar foto', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_rounded, color: Color(0xFFC88D51)),
+                title: const Text('Elegir de la galería', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (origen == null) return;
+    final archivo = await ImagePicker().pickImage(source: origen, imageQuality: 80);
+    if (archivo != null) await _usarArchivo(archivo);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -133,10 +166,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                   onDragExited: (_) => setState(() => _arrastrando = false),
                   onDragDone: (d) => d.files.isNotEmpty ? _usarArchivo(d.files.first) : null,
                   child: GestureDetector(
-                    onTap: () async {
-                      final archivo = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80);
-                      if (archivo != null) await _usarArchivo(archivo);
-                    },
+                    onTap: _seleccionarImagen,
                     child: Container(
                       height: 140,
                       decoration: BoxDecoration(
