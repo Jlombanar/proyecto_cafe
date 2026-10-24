@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema({
   // Recuperación de contraseña
   codigoRecuperacion: String,
   codigoexpiracion: Date,
-  rol: { type: String, enum: ["admin","usuario"], default: "usuario" }
+  rol: { type: String, enum: ["admin","usuario"], default: "usuario" },
+
+  // Productos marcados como favoritos
+  favoritos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Productos" }]
 }, { timestamps: true });
 
 // 2. ENCRIPTAR LA CONTRASEÑA ANTES DE GUARDAR

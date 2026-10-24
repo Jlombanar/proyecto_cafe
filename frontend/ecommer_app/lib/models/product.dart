@@ -35,4 +35,16 @@ class Product {
       imageUrl: (json['Image'] ?? json['image'] ?? json['imagen_url'] ?? json['imageUrl'] ?? json['imagen'] ?? '').toString(),
     );
   }
+
+  // Usa las mismas claves del backend para poder reconstruirlo con fromJson
+  // (se usa para guardar el carrito en el dispositivo)
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'Nombre': title,
+      'Descripcion': description,
+      'Precio': price,
+      'Image': imageUrl,
+    };
+  }
 }

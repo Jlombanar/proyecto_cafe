@@ -1,8 +1,15 @@
-import 'package:ecommer_app/pages/login.dart';
+import 'package:ecommer_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 class TopBar extends StatelessWidget {
-  const TopBar({super.key});
+  final VoidCallback onProfileTap;
+  final VoidCallback onNotificationsTap;
+
+  const TopBar({
+    super.key,
+    required this.onProfileTap,
+    required this.onNotificationsTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +22,7 @@ class TopBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '¡Bienvenido! 👋',
+              '¡Bienvenido!',
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 20,
@@ -38,17 +45,26 @@ class TopBar extends StatelessWidget {
           children: [
             _buildIconButton(
               icon: Icons.person_outline_rounded,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
+              onTap: onProfileTap,
             ),
             const SizedBox(width: 10),
-            _buildIconButton(
-              icon: Icons.notifications_none_rounded,
-              onTap: () {},
+            // Campana con el número de notificaciones sin leer
+            ListenableBuilder(
+              listenable: NotificationService.instance,
+              builder: (context, _) {
+                final noLeidas = NotificationService.instance.noLeidas;
+                return Badge(
+                  isLabelVisible: noLeidas > 0,
+                  label: Text('$noLeidas'),
+                  backgroundColor: const Color(0xFFC88D51),
+                  child: _buildIconButton(
+                    icon: noLeidas > 0
+                        ? Icons.notifications_active_rounded
+                        : Icons.notifications_none_rounded,
+                    onTap: onNotificationsTap,
+                  ),
+                );
+              },
             ),
           ],
         ),

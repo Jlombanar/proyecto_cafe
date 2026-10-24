@@ -3,6 +3,7 @@ import 'package:ecommer_app/models/usuario.dart';
 import 'package:ecommer_app/services/sesion_service.dart';
 import 'package:ecommer_app/services/auth_service.dart';
 import 'package:ecommer_app/pages/login.dart';
+import 'package:ecommer_app/pages/my_orders.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -112,6 +113,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Información del Usuario
                     _buildInfoTile(Icons.phone_outlined, 'Teléfono', _usuario!.telefono),
                     _buildInfoTile(Icons.badge_outlined, 'Rol', _usuario!.rol),
+                    const SizedBox(height: 8),
+                    // Historial de compras
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MyOrdersPage()),
+                      ),
+                      icon: const Icon(Icons.receipt_long_rounded),
+                      label: const Text(
+                        'MIS PEDIDOS',
+                        style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        side: const BorderSide(color: primaryColor),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ),
                     const Spacer(),
                     // Botón Cerrar Sesión
                     ElevatedButton.icon(

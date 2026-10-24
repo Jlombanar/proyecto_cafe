@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'api_config.dart';
 import 'sesion_service.dart';
+import 'favorites_service.dart';
+import 'notification_service.dart';
 import '../models/usuario.dart';
 
 class AuthService {
@@ -149,5 +151,7 @@ class AuthService {
       await _googleSignIn.signOut();
     } catch (_) {}
     await SessionService.cerrarSesion();
+    FavoritesService.instance.limpiar();
+    NotificationService.instance.limpiar();
   }
 }

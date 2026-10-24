@@ -6,6 +6,9 @@ import LoginUsers  from "./routes/Login.js";
 import recuperarRoutes from "./routes/Recuperar.js";
 import productosRoutes from "./routes/Productos.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import pedidosRoutes from "./routes/Pedidos.js";
+import favoritosRoutes from "./routes/Favoritos.js";
+import notificacionesRoutes from "./routes/Notificaciones.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from 'cors';
@@ -57,6 +60,15 @@ app.use("/api/productos", productosRoutes);
 
 // Ruta de chat
 app.use("/api/chat", chatRoutes);
+
+// Rutas de pedidos (carrito / checkout / panel admin)
+app.use("/api/pedidos", pedidosRoutes);
+
+// Rutas de favoritos
+app.use("/api/favoritos", favoritosRoutes);
+
+// Rutas de notificaciones
+app.use("/api/notificaciones", notificacionesRoutes);
 
 console.log('CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME);
 console.log('CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY);

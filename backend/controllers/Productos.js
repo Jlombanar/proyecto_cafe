@@ -36,10 +36,17 @@ export const crearProducto = async (req, res) => {
     }
 };
 
-// Obtener todos los productos
+// Obtener todos los productos (opcional: ?buscar=texto filtra por nombre o descripción)
 export const obtenerProductos = async (req, res) => {
     try {
-        const listarProductos = await Productos.find();
+        const filtro = {};
+        const buscar = req.query.buscar?.trim();
+        if (buscar) {
+            // Escapa caracteres especiales para usar el texto como regex literal
+            const patron = new RegExp(buscar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+            filtro.$or = [{ Nombre: patron }, { Descripcion: patron }];
+        }
+        const listarProductos = await Productos.find(filtro);
         res.status(200).json(listarProductos);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los productos" });

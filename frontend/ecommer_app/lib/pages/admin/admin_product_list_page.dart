@@ -6,6 +6,7 @@ import 'package:ecommer_app/services/sesion_service.dart';
 import 'package:ecommer_app/services/api_config.dart';
 import 'package:ecommer_app/widgets/admin_drawer.dart';
 import 'package:ecommer_app/widgets/product_form_sheet.dart';
+import 'package:ecommer_app/pages/admin/admin_orders_page.dart';
 
 // Protegido contra valores null o vacíos
 String _resolverUrl(String? url) {
@@ -124,6 +125,16 @@ class _AdminProductListPageState extends State<AdminProductListPage> {
         backgroundColor: const Color(0xFF181513),
         foregroundColor: Colors.white,
         title: const Text('Panel de Administración'),
+        actions: [
+          IconButton(
+            tooltip: 'Pedidos',
+            icon: const Icon(Icons.receipt_long_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AdminOrdersPage()),
+            ),
+          ),
+        ],
       ),
       drawer: AdminDrawer(
         adminName: _adminNombre,

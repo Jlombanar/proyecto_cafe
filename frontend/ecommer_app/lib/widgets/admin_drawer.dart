@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ecommer_app/services/auth_service.dart';
 import 'package:ecommer_app/pages/login.dart';
 import 'package:ecommer_app/pages/admin/admin_product_list_page.dart';
+import 'package:ecommer_app/pages/admin/admin_orders_page.dart';
 
 class AdminDrawer extends StatelessWidget {
   final String adminName;
@@ -15,8 +16,7 @@ class AdminDrawer extends StatelessWidget {
 
   Future<void> _cerrarSesion(BuildContext context) async {
     // 1. Limpiar datos de sesión guardados en el dispositivo
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await AuthService.logout();
 
     if (!context.mounted) return;
 
@@ -92,7 +92,12 @@ class AdminDrawer extends StatelessWidget {
                   title: 'Pedidos',
                   onTap: () {
                     Scaffold.of(context).closeDrawer();
-                    // Navigator.pushNamed(context, '/admin/pedidos');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AdminOrdersPage(),
+                      ),
+                    );
                   },
                 ),
               ],

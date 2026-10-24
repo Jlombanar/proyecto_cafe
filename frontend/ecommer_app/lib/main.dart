@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:ecommer_app/pages/home.dart';
+import 'package:ecommer_app/services/cart_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,6 +10,9 @@ Future<void> main() async {
   // la sesión en CADA arranque (solo útil para pruebas). Se quita para que la
   // sesión persista entre aperturas de la app. Si quieres forzar el logout al
   // iniciar, vuelve a importar el servicio y llama a cerrarSesion() aquí.
+
+  // Recupera el carrito guardado en el dispositivo
+  await CartService.instance.cargar();
 
   runApp(const MyApp());
 }
