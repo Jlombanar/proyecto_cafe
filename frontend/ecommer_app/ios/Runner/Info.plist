@@ -74,5 +74,23 @@
 	<string>Se usa la galería para elegir fotos de los productos.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Google Sign-In: Client ID tipo iOS (para el login en el iPhone) -->
+	<key>GIDClientID</key>
+	<string>941062996232-ftgr1952n1ak133d3ugbk1cud8fqmfu1.apps.googleusercontent.com</string>
+	<!-- Client ID tipo Web: el idToken se emite para él, que es el que valida el backend -->
+	<key>GIDServerClientID</key>
+	<string>941062996232-1a5p710a19q68e895ma6htiokch286p4.apps.googleusercontent.com</string>
+	<!-- Permite que Google devuelva al usuario a la app después de elegir la cuenta -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.941062996232-ftgr1952n1ak133d3ugbk1cud8fqmfu1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
